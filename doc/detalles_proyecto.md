@@ -1,10 +1,10 @@
 # Proyecto de Automatización para la Identificación de Sitios de Unión de Factores de Transcripción en E. coli en experimentos de ChIP-Seq
 
-Fecha: [dd/mm/yyyy]
+Fecha: [11/03/2025]
 
 Participantes: 
 
-- [nombre]  <email: > 
+- [Hector Jesus Lopez Ordaz]  <email: hectorjl@lcg.unam.mx> 
 
 ## Descripción del Problema
 <!-- Puedes empezar con una introducción, luego la justificación y plantear el problema. -->
@@ -12,6 +12,17 @@ Participantes:
 El proyecto busca automatizar la extracción y el análisis de secuencias genómicas donde los factores de transcripción se unen en _Escherichia coli_. Se cuenta con un archivo que contiene información sobre los picos de unión, y con otro archivo que posee la secuencia completa del genoma. El objetivo es generar archivos FASTA específicos para cada factor de transcripción (TF), agrupando las secuencias de los picos de unión correspondientes. Posteriormente, estas secuencias serán analizadas mediante el software `meme` para identificar motivos, para eso se tiene que generar un script shell con todas las instrucciones `meme` usando las secuencias fasta de los picos de cada TF.
 
 ## Especificación de Requisitos
+<!-- 
+    
+    ¿Faltó algún requisito importante? 
+            Podemos además de lo incluido agregar detalles sobre la validación de datos de entrada y salida, para corroborrar que esta funcionando como debe y con los datos que se supone
+
+    ¿Algún requisito necesita ser modificado o aclarado?
+                Podriamos mencionar que el análisis funcina actualmente para la cedena forward no la reverse
+
+
+    
+-->
 
 
 ### Requisitos Funcionales:
@@ -51,6 +62,10 @@ El proyecto busca automatizar la extracción y el análisis de secuencias genóm
     -   El módulo debe generar un script de shell que contiene todas las líneas de comandos necesarias para ejecutar `meme` en cada archivo FASTA.
     -   Este script debe grabarse en el directorio de trabajo actual con un nombre predefinido, como `run_meme.sh`.
     
+
+4.  **Validación de datos:**
+    
+    -   Verificar que los archivos iniciales esten en el formato que se requiere (FASTA).
 
 ### **Requisitos No Funcionales:**
 
