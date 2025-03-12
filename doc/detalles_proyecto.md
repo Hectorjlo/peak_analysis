@@ -134,7 +134,7 @@ Este archivo contiene información crucial sobre las regiones de unión de los 1
 
 ## Análisis y Diseño
 
-<!-- Incluir el algoritmo o pseudocódigo. También puedes usar casos de uso, u otros diagramas UML. Como sugerencia dar solución requisito por requisito. Describir formatos de datos de entrada y salida. -->
+<!-- Se eliminó un diagrama para que no sea redundante-->
 
 
 
@@ -190,7 +190,7 @@ Este archivo contiene información crucial sobre las regiones de unión de los 1
     -   Generar una línea de comando para ejecutar `meme` usando cada archivo FASTA.
     -   Incluir opciones necesarias (por ejemplo, `-oc <output_directory>`, `-mod oops`, etc.) y asegurar nombrar el directorio de salida para cada ejecución de `meme`.
 3.  **Salida del Script:**
-    - salida a pantalla
+    -   Salida a pantalla
     
 
 **Algoritmo:**
@@ -207,42 +207,14 @@ Este archivo contiene información crucial sobre las regiones de unión de los 1
 
 
 
-### Diagrama de Caso de Uso (PlantUML) para Visualizar el Proceso:
-
-Usar un editor para visualizar el diagrama <https://sujoyu.github.io/plantuml-previewer/>
-
-```
-@startuml
-actor "Usuario" as usuario
-
-rectangle "Sistema de Extracción y Creación de FASTA (Python)" {
-    usecase "Leer archivo de picos y genoma FASTA" as UC1
-    usecase "Extraer y agrupar secuencias por TF_name" as UC2
-    usecase "Generar archivos FASTA" as UC3
-}
-
-rectangle "Script de Automatización de meme (Shell)" {
-    usecase "Leer directorio de archivos FASTA" as UC4
-    usecase "Generar script de comandos meme" as UC5
-}
-
-usuario --> UC1 : Ejecuta script Python
-UC1 --> UC2
-UC2 --> UC3 : Guarda archivos FASTA
-usuario --> UC4 : Ejecuta script Shell
-UC4 --> UC5 : Crea script de ejecución de meme
-
-@enduml
-```
-
-En formato marmaid, que stackEdit sí reconoce.
+### Diagrama de Caso de Uso
 
 ```mermaid
 %% Diagrama de Casos de Uso en Mermaid
 %% Representa la interacción del usuario con el sistema de extracción y creación de FASTA
 
 graph TD
-  usuario["🧑 Usuario"] -->|Ejecuta script Python| UC1["📂 Leer archivo de picos y genoma FASTA"]
+  usuario["🧑 Usuario"] -->|Ejecuta script Python| UC1["📂 Leer archivo de picos (.tsv) y genoma FASTA"]
   UC1 --> UC2["🔍 Extraer y agrupar secuencias por TF_name"]
   UC2 -->|Guarda archivos FASTA| UC3["📄 Generar archivos FASTA"]
   
