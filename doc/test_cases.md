@@ -54,3 +54,51 @@ ls
 log.out
 fasta_peaks/
 ```
+<!--Agregaré casoso donde el archivo de picos tiene un formato incorrecto y otro que se verifique que la salida tenga los datos esperados-->
+
+4.  **Caso: Formato incorrecto del archivo de picos.**
+    
+    -   **Entradas:**
+        -   Archivo de picos con columnas mal formateadas o faltantes.
+        -   Archivo FASTA del genoma válido.
+        -   Directorio de salida.
+    -   **Esperado:** `"Error: The peak file format is incorrect. Check column structure."`
+
+```python
+    mk_fasta_from_peaks.py -i malformed_peak_file.txt -g Ecoli.fna -o fasta_peaks/ 
+```
+  
+```
+Error: The peak file format is incorrect. Check column structure.
+```
+
+5.  **Caso: Verificación de la correcta generación de archivos FASTA.**
+    
+    -   **Entradas:**
+        -   Archivo de picos válido con coordenadas correctas.
+        -   Archivo FASTA del genoma válido.
+        -   Directorio de salida.
+    -   **Esperado:**
+        -   Se deben generar archivos FASTA por cada `TF_name` en el directorio de salida.
+        -   El contenido de los archivos debe corresponder con las secuencias extraídas.
+
+```python
+    mk_fasta_from_peaks.py -i peak_file.txt -g Ecoli.fna -o fasta_peaks/ 
+```
+
+```bash
+ls fasta_peaks/
+```
+
+```bash
+TF1.fa  TF2.fa  TF3.fa
+```
+
+```bash
+cat fasta_peaks/TF1.fa
+```
+
+```bash
+>peak_1
+ATCGGCTA...
+```
