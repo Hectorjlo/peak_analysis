@@ -48,14 +48,18 @@ def extract_sequence_and_read_peak_file(peak_file_path, linealized_genome):
     # Create a list of the TF_name, peak_start and peak_end
     list_of_peaks = []
     with open(peak_file_path, 'r') as peak_file:
+        # Skip the first line of the file of the peak file, that is the header
+        next(peak_file)  
+
         # Read each line and split it by tab
         for line in peak_file:
             columns = line.strip().split('\t')
             # TF_name is in the third column, peak_start in the fourth and peak_end in the fifth (counting form 1)
+            # The positions can have .0, that int can't convert, so first is converted in a float and then in a int
             tf_name = columns[2]  
-            peak_start = int(columns[3])
-            peak_end = int(columns[4])
-            peak_number = int(columns[6])
+            peak_start = int(float(columns[3]))
+            peak_end = int(float(columns[4]))
+            peak_number = int(float(columns[6]))
             list_of_peaks.append({
                 'TF_name': tf_name, 
                 'sequence': linealized_genome[peak_start-1 : peak_end], 
@@ -123,8 +127,19 @@ def main():
     linealized_genome = genome_upload(fasta_path)
     list_of_peaks = extract_sequence_and_read_peak_file(peak_file_path, linealized_genome)
 
+    # Group peaks by TF_name
+    grouped_peaks = {}
+    for tfs in list_of_peaks:
+        tf_name = tfs['TF_name']
+        # If the name is not in the diccionary it needs to be added, but the value empty 
+        if tf_name not in grouped_peaks:
+            grouped_peaks[tf_name] = []
+        # Add the key and value corresponding to the tf name
+        grouped_peaks[tf_name].append(tfs)
+    # In the end we get a diccionary that cointains keys (TF names) and values that is a list of diccionaries with key of the TF name and the peak number
+
     # Generate the FASTA files
-    fasta_by_tf_generator(list_of_peaks, output_path)
+    fasta_by_tf_generator(grouped_peaks, output_path)
     print(f"FASTA files generated in {output_path}")
     print("The FASTA files generated ...")
     
