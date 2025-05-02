@@ -103,6 +103,8 @@ def fasta_by_tf_generator(list_of_peaks, output_path):
 def main():
     """
     Main script that manages the logic of execution
+
+    Can use python extract_fasta.py -h to see the options of the script
     """
 
     # Define a parser to get the arguments from the command line
