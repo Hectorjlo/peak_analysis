@@ -98,7 +98,23 @@ def fasta_by_tf_generator(list_of_peaks, output_path):
             output_file.write('\n')
             
 
+def group_peaks_by_tf(peaks):
+    """
+    Groups peaks by their TF_name.
 
+    Parameters:
+        peaks (list): List of dictionaries containing peak information.
+
+    Returns:
+        dict: A dictionary where keys are TF_names and values are lists of peaks.
+    """
+    grouped_peaks = {}
+    for tfs in peaks:
+        tf_name = tfs['TF_name']
+        if tf_name not in grouped_peaks:
+            grouped_peaks[tf_name] = []
+        grouped_peaks[tf_name].append(tfs)
+    return grouped_peaks
 
 def main():
     """
@@ -130,14 +146,8 @@ def main():
     list_of_peaks = extract_sequence_and_read_peak_file(peak_file_path, linealized_genome)
 
     # Group peaks by TF_name
-    grouped_peaks = {}
-    for tfs in list_of_peaks:
-        tf_name = tfs['TF_name']
-        # If the name is not in the diccionary it needs to be added, but the value empty 
-        if tf_name not in grouped_peaks:
-            grouped_peaks[tf_name] = []
-        # Add the key and value corresponding to the tf name
-        grouped_peaks[tf_name].append(tfs)
+    grouped_peaks = group_peaks_by_tf(list_of_peaks)
+    
     # In the end we get a diccionary that cointains keys (TF names) and values that is a list of diccionaries with key of the TF name and the peak number
 
     # Generate the FASTA files
