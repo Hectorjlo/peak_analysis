@@ -116,7 +116,7 @@ def group_peaks_by_tf(peaks):
         grouped_peaks[tf_name].append(tfs)
     return grouped_peaks
 
-def is_valid_file(file_path, type):
+def is_valid_file(file_path, type_file):
     """
     Checks if a file is a valid FASTA file.
 
@@ -132,11 +132,11 @@ def is_valid_file(file_path, type):
         return False
 
     # Check if the file is empty
-    if os.path.getsize(file_path) == 0:
+    if not (os.path.getsize(file_path)):
         print(f"Error: The file {file_path} is empty.")
         return False
 
-    if type == 1:
+    if type_file == 1:
         # Check if the file has at least one header line that starts with '>'
         with open(file_path, 'r') as file:
             for line in file:
@@ -145,6 +145,8 @@ def is_valid_file(file_path, type):
 
         print(f"Error: The file {file_path} does not appear to be a valid FASTA file no header found")
         return False
+    
+    return True
 
 def main():
     """
@@ -175,6 +177,7 @@ def main():
     if not is_valid_file(peak_file_path, 0):
         print(f"Error: The file {peak_file_path} is not a valid peak file.")
         exit(1)
+    
 
     # Check if the output path exists, if not create it
     if not os.path.exists(output_path):
