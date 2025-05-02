@@ -116,6 +116,36 @@ def group_peaks_by_tf(peaks):
         grouped_peaks[tf_name].append(tfs)
     return grouped_peaks
 
+def is_valid_file(file_path, type):
+    """
+    Checks if a file is a valid FASTA file.
+
+    Parameters:
+        file_path (str): Path to the file.
+
+    Returns:
+        bool: True if the file is a valid FASTA file, False otherwise.
+    """
+    # Check if the file exists
+    if not os.path.exists(file_path):
+        print(f"Error: The file {file_path} does not exist.")
+        return False
+
+    # Check if the file is empty
+    if os.path.getsize(file_path) == 0:
+        print(f"Error: The file {file_path} is empty.")
+        return False
+
+    if type == 1:
+        # Check if the file has at least one header line that starts with '>'
+        with open(file_path, 'r') as file:
+            for line in file:
+                if line.startswith('>'):
+                    return True
+
+        print(f"Error: The file {file_path} does not appear to be a valid FASTA file no header found")
+        return False
+
 def main():
     """
     Main script that manages the logic of execution
@@ -136,6 +166,16 @@ def main():
     peak_file_path = arguments.peak
     output_path = arguments.output
 
+    # Test if the fasta file is valid
+    if not is_valid_file(fasta_path, 1):
+        print(f"Error: The file {fasta_path} is not a valid FASTA file.")
+        exit(1)
+    
+    #Test if the peak file is valid
+    if not is_valid_file(peak_file_path, 0):
+        print(f"Error: The file {peak_file_path} is not a valid peak file.")
+        exit(1)
+
     # Check if the output path exists, if not create it
     if not os.path.exists(output_path):
         os.makedirs(output_path)
@@ -147,7 +187,7 @@ def main():
 
     # Group peaks by TF_name
     grouped_peaks = group_peaks_by_tf(list_of_peaks)
-    
+
     # In the end we get a diccionary that cointains keys (TF names) and values that is a list of diccionaries with key of the TF name and the peak number
 
     # Generate the FASTA files
