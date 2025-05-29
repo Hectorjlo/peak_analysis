@@ -47,9 +47,9 @@ def main():
 
     # Define a parser to get the arguments from the command line
     parser = argparse.ArgumentParser(description="Creates FASTA files from a peak file to extract the Transcription Factor sequences")
-    parser.add_argument('-f', '--fasta', required=True, help="Path to the FASTA file")
-    parser.add_argument('-p', '--peak', required=True, help="Path to the peak file")
-    parser.add_argument('-o', '--output', required=True, help="Path to the output directory")
+    parser.add_argument('-f', '--fasta', required=True, help="Absolute path to the FASTA file", type= str)
+    parser.add_argument('-p', '--peak', required=True, help="Absolute path to the peak file", type=str)
+    parser.add_argument('-o', '--output', required=True, help="Absolute path to the output directory", type=str)
 
     arguments = parser.parse_args()
 
