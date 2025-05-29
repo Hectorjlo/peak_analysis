@@ -86,10 +86,6 @@ def main():
         print('Enter a path with a peak file')
         exit(1)
 
-    # Using assert to check for empty files
-    assert isinstance(linealized_genome, str) and linealized_genome, 'The FASTA file seems empty check again'
-    assert isinstance(list_of_peaks, list) and list_of_peaks, 'The peak file seems empty check again'
-
     # Group peaks by TF_name
     grouped_peaks = group_peaks_by_tf(list_of_peaks)
 

@@ -20,7 +20,7 @@ Date:
 import os
 
 
-def extract_sequence_and_read_peak_file(peak_file_path, linealized_genome):
+def extract_sequence_and_read_peak_file(peak_file_path, linealized_genome, output_path):
     """
     Given a peak file returns a list of dictionaries with TF_name, peak_number and squence
     
@@ -37,6 +37,10 @@ def extract_sequence_and_read_peak_file(peak_file_path, linealized_genome):
     if not os.path.exists(peak_file_path):
         print(f"The file {peak_file_path} does not exist")
         return FileNotFoundError
+    
+    # Check if the peaks are not outside range
+    genome_length = len(linealized_genome)
+    log_outside_range = []
 
     # Create a list of the TF_name, peak_start and peak_end
     list_of_peaks = []
@@ -53,10 +57,26 @@ def extract_sequence_and_read_peak_file(peak_file_path, linealized_genome):
             peak_start = int(float(columns[3]))
             peak_end = int(float(columns[4]))
             peak_number = int(float(columns[6]))
+
+            #check if something is out of range
+            if (peak_start < 1 or peak_end) > genome_length:
+                log_outside_range.append(f'The line {line.strip()} is out of the range of the genome')
+                continue            
+
             list_of_peaks.append({
                 'TF_name': tf_name, 
                 'sequence': linealized_genome[peak_start-1 : peak_end], 
                 'peak_number': peak_number})
+            
+    
+    if log_outside_range:
+        # Create the log file if neeeded
+        log_out = os.path.join(output_path, 'log.out')
+        with open(log_out, 'w') as log_file:
+            log_file.write('Peaks out of genome range:\n')
+            for log_line in log_outside_range:
+                log_file.write(log_line + '\n')
+        print('Some peaks were out of range, check log.out to see them')
     
     return list_of_peaks
 
