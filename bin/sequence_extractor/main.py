@@ -77,7 +77,13 @@ def main():
     # Call to the funtions
 
     linealized_genome = genome_upload(fasta_path)
+    if not linealized_genome:
+        print('Enter a path with a FASTA file')   
+        exit(1) 
     list_of_peaks = extract_sequence_and_read_peak_file(peak_file_path, linealized_genome)
+    if not list_of_peaks:
+        print('Enter a path with a peak file')
+        exit(1)
 
     # Group peaks by TF_name
     grouped_peaks = group_peaks_by_tf(list_of_peaks)
