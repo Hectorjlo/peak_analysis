@@ -4,9 +4,10 @@ Script: main.py
 Description:
 This script generates FASTA files containing Transcription Factor (TF) sequences extracted from a peak file and a reference genome FASTA file. 
 It processes the input files, validates their formats, groups peaks by TF names, and generates separate FASTA files for each TF in the specified output directory.
+The paths are needed to in absolute format
 
 Usage:
-    python main.py -f <fasta_file> -p <peak_file> -o <output_directory>
+    python main.py -f <fasta_file> -p <peak_file> -o <output_directory> 
 
 Arguments:
     -f, --fasta (str, required):
@@ -47,7 +48,7 @@ def main():
 
     # Define a parser to get the arguments from the command line
     parser = argparse.ArgumentParser(description="Creates FASTA files from a peak file to extract the Transcription Factor sequences")
-    parser.add_argument('-f', '--fasta', required=True, help="Absolute path to the FASTA file", type= str)
+    parser.add_argument('-f', '--fasta', required=True, help="Absolute path to the FASTA file", type=str)
     parser.add_argument('-p', '--peak', required=True, help="Absolute path to the peak file", type=str)
     parser.add_argument('-o', '--output', required=True, help="Absolute path to the output directory", type=str)
 
