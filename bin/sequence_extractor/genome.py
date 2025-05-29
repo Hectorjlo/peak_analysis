@@ -33,7 +33,7 @@ def genome_upload(fasta_path):
     # Check if the path exists
     if not os.path.exists(fasta_path):
         print(f"The file {fasta_path} does not exist")
-        return 0
+        return FileNotFoundError
 
     with open(fasta_path, 'r') as fasta_file:
         # Read the file and skip the header lines

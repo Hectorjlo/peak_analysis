@@ -75,15 +75,20 @@ def main():
         os.makedirs(output_path)
 
     # Call to the funtions
-
-    linealized_genome = genome_upload(fasta_path)
-    if not linealized_genome:
+    try:
+        linealized_genome = genome_upload(fasta_path)
+    except FileNotFoundError:
         print('Enter a path with a FASTA file')   
         exit(1) 
-    list_of_peaks = extract_sequence_and_read_peak_file(peak_file_path, linealized_genome)
-    if not list_of_peaks:
+    try: 
+        list_of_peaks = extract_sequence_and_read_peak_file(peak_file_path, linealized_genome)
+    except FileNotFoundError:
         print('Enter a path with a peak file')
         exit(1)
+
+    # Using assert to check for empty files
+    assert isinstance(linealized_genome, str) and linealized_genome, 'The FASTA file seems empty check again'
+    assert isinstance(list_of_peaks, list) and list_of_peaks, 'The peak file seems empty check again'
 
     # Group peaks by TF_name
     grouped_peaks = group_peaks_by_tf(list_of_peaks)

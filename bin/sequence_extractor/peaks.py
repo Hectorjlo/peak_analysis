@@ -36,7 +36,7 @@ def extract_sequence_and_read_peak_file(peak_file_path, linealized_genome):
     # Check if the path exists
     if not os.path.exists(peak_file_path):
         print(f"The file {peak_file_path} does not exist")
-        return 0
+        return FileNotFoundError
 
     # Create a list of the TF_name, peak_start and peak_end
     list_of_peaks = []
