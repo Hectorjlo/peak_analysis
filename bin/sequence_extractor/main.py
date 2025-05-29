@@ -86,7 +86,7 @@ def main():
     # Generate the FASTA files
     fasta_by_tf_generator(grouped_peaks, output_path)
     print(f"FASTA files generated in {output_path}")
-    print("The FASTA files generated ...")
+    print("'\n\nThe FASTA files generated ...")
 
 # If the program is run directly execute the main script
 if __name__ == "__main__":
