@@ -1,4 +1,7 @@
-﻿# Peak Analysis 
+**Developer**: Lopez Ordaz Hector jesus
+**Email**: <hectorjl@lcg.unam.mx> 
+**Date**: [29/05/2025]
+ # Peak Analysis 
   
 ## Description
 
