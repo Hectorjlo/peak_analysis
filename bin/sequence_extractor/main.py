@@ -81,9 +81,12 @@ def main():
         print('Enter a path with a FASTA file')   
         exit(1) 
     try: 
-        list_of_peaks = extract_sequence_and_read_peak_file(peak_file_path, linealized_genome)
+        list_of_peaks = extract_sequence_and_read_peak_file(peak_file_path, linealized_genome, output_path)
     except FileNotFoundError:
         print('Enter a path with a peak file')
+        exit(1)
+    except ValueError as e:
+        print(f'Error processing peak file: {e}')
         exit(1)
 
     # Group peaks by TF_name

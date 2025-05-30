@@ -8,6 +8,7 @@ The script is designed to handle peak files in tab-separated format and assumes 
 
 Dependencies:
     - os: For handling file paths and directory operations.
+    - pandas: For handling tabular data manipulation.
     - Assumed availability of a linearized genome sequence (produced by another function or script).
 
 Author:
@@ -18,15 +19,17 @@ Date:
 """
 
 import os
+import pandas as pd
 
 
 def extract_sequence_and_read_peak_file(peak_file_path, linealized_genome, output_path):
     """
-    Given a peak file returns a list of dictionaries with TF_name, peak_number and squence
+    Given a peak file returns a list of dictionaries with TF_name, peak_number and sequence
     
     Parameters:
         peak_file_path: path of a peak file
-        linealized_genome: a str linealized that cointains the genome
+        linealized_genome: a str linealized that contains the genome
+        output_path: path to the output directory
 
     Returns:
         list_of_peaks (list): List of dictionaries with TF_name, peak_number and sequence
@@ -35,48 +38,54 @@ def extract_sequence_and_read_peak_file(peak_file_path, linealized_genome, outpu
 
     # Check if the path exists
     if not os.path.exists(peak_file_path):
-        print(f"The file {peak_file_path} does not exist")
-        return FileNotFoundError
+        raise FileNotFoundError(f"The file {peak_file_path} does not exist")
+    
+    # Read the peak file using pandas
+    try:
+        df = pd.read_csv(peak_file_path, sep='\t')
+    except Exception:
+        raise ValueError("Error reading peak file")
+    
+    # Check if required columns exist
+    required_columns = ['TF_name', 'Peak_start', 'Peak_end', 'Peak_number']
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    if missing_columns:
+        raise ValueError(f"Missing required columns: {missing_columns}")
+    
+    # Convert columns to numeric, handling potential float values
+    df['Peak_start'] = pd.to_numeric(df['Peak_start'], errors='coerce').astype(int)
+    df['Peak_end'] = pd.to_numeric(df['Peak_end'], errors='coerce').astype(int) 
+    df['Peak_number'] = pd.to_numeric(df['Peak_number'], errors='coerce').astype(int)
     
     # Check if the peaks are not outside range
     genome_length = len(linealized_genome)
-    log_outside_range = []
-
-    # Create a list of the TF_name, peak_start and peak_end
-    list_of_peaks = []
-    with open(peak_file_path, 'r') as peak_file:
-        # Skip the first line of the file of the peak file, that is the header
-        next(peak_file)  
-
-        # Read each line and split it by tab
-        for line in peak_file:
-            columns = line.strip().split('\t')
-            # TF_name is in the third column, peak_start in the fourth and peak_end in the fifth (counting form 1)
-            # The positions can have .0, that int can't convert, so first is converted in a float and then in a int
-            tf_name = columns[2]  
-            peak_start = int(float(columns[3]))
-            peak_end = int(float(columns[4]))
-            peak_number = int(float(columns[6]))
-
-            #check if something is out of range
-            if (peak_start < 1 or peak_end) > genome_length:
-                log_outside_range.append(f'The line {line.strip()} is out of the range of the genome')
-                continue            
-
-            list_of_peaks.append({
-                'TF_name': tf_name, 
-                'sequence': linealized_genome[peak_start-1 : peak_end], 
-                'peak_number': peak_number})
-            
     
-    if log_outside_range:
-        # Create the log file if neeeded
+    # Filter out-of-range peaks and create log
+    out_of_range_mask = (df['Peak_start'] < 1) | (df['Peak_end'] > genome_length)
+    out_of_range_df = df[out_of_range_mask]
+    valid_df = df[~out_of_range_mask]
+    
+    # Handle out-of-range peaks logging
+    if not out_of_range_df.empty:
         log_out = os.path.join(output_path, 'log.out')
         with open(log_out, 'w') as log_file:
             log_file.write('Peaks out of genome range:\n')
-            for log_line in log_outside_range:
-                log_file.write(log_line + '\n')
-        print('Some peaks were out of range, check log.out to see them')
+            for i, row in out_of_range_df.iterrows():
+                log_file.write(f"TF: {row['TF_name']}, Start: {row['Peak_start']}, End: {row['Peak_end']}, Peak_number: {row['Peak_number']}\n")
+        print('Warning: Some peaks are bigger than the genome. Check the log.out file')
+    
+    # Extract sequences and create list of dictionaries
+    list_of_peaks = []
+    for i, row in valid_df.iterrows():
+        peak_start = row['Peak_start']
+        peak_end = row['Peak_end']
+        sequence = linealized_genome[peak_start-1 : peak_end]
+        
+        list_of_peaks.append({
+            'TF_name': row['TF_name'],
+            'sequence': sequence,
+            'peak_number': row['Peak_number']
+        })
     
     return list_of_peaks
 
@@ -121,10 +130,12 @@ def group_peaks_by_tf(peaks):
     Returns:
         dict: A dictionary where keys are TF_names and values are lists of peaks.
     """
+    # Convert list of dictionaries to DataFrame for easier manipulation
+    df = pd.DataFrame(peaks)
+    
+    # Group by TF_name and convert back to the expected format
     grouped_peaks = {}
-    for tfs in peaks:
-        tf_name = tfs['TF_name']
-        if tf_name not in grouped_peaks:
-            grouped_peaks[tf_name] = []
-        grouped_peaks[tf_name].append(tfs)
+    for tf_name, group in df.groupby('TF_name'):
+        grouped_peaks[tf_name] = group.to_dict('records')
+    
     return grouped_peaks
